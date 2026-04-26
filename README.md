@@ -4,13 +4,16 @@ A web tool for designing and exporting beautiful data tables — no code require
 
 **Live:** https://table-craft.vercel.app
 
-## Features (v0.1 MVP)
+## Features (v0.2)
 - Editable table grid (add/remove rows & columns)
-- 3 built-in themes (Corporate Blue, Minimal Clean, Dark Professional)
+- 8 built-in themes
+- Column types: text, number, currency, badge, status, bold
+- Column alignment control per column
+- Undo / Redo (Ctrl+Z / Ctrl+Y)
 - CSV paste & file import
-- Export: PNG, PDF, CSV, JSON
 - JSON save/load
-
+- Export: PNG, PDF, CSV, JSON, SVG, LaTeX
+  
 ## Tech Stack
 - React 18 + TypeScript
 - Vite + Tailwind CSS v4

@@ -76,32 +76,32 @@ function App() {
             {showImport ? "Hide Import" : "↑ Import"}
           </button>
           <button
-            onClick={() => exportPNG("table-preview", title)}
+            onClick={async () => exportPNG("table-preview", title)}
             className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             ↓ PNG
           </button>
           <button
-            onClick={() => exportPDF("table-preview", title)}
+            onClick={async () => exportPDF("table-preview", title)}
             className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
           >
             ↓ PDF
           </button>
           <button
-            onClick={() => exportCSV(columns, rows, title)}
+            onClick={async () => exportCSV(columns, rows, title)}
             className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
           >
             ↓ CSV
           </button>
           <button
-            onClick={() => exportLatex(columns, rows, title)}
+            onClick={async () => exportLatex(columns, rows, title)}
             className="px-3 py-1 text-sm bg-yellow-600 text-white rounded hover:bg-yellow-700"
           >
             ↓ LaTeX
           </button>
 
           <button
-            onClick={() =>
+            onClick={async () =>
               exportSVG(
                 columns,
                 rows,
@@ -116,7 +116,7 @@ function App() {
           </button>
 
           <button
-            onClick={() => exportJSON(useTableStore.getState())}
+            onClick={async () => exportJSON(useTableStore.getState())}
             className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
           >
             ↓ JSON

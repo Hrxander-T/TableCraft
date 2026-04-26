@@ -1,11 +1,13 @@
 import type { Column, Row, TableSettings } from '../types'
 import type { Theme } from '../themes'
+import { saveFile } from '../utils/fileSave'
+
 
 // --- Padding map ---
 const paddingMap = { compact: 6, normal: 10, spacious: 16 }
 
 // --- Generate SVG from table state ---
-export function exportSVG(
+export async function exportSVG(
   columns: Column[],
   rows: Row[],
   title: string,
@@ -59,9 +61,6 @@ export function exportSVG(
   ${svgRows}
 </svg>`
 
-  const blob = new Blob([svg], { type: 'image/svg+xml' })
-  const link = document.createElement('a')
-  link.download = `${filename}.svg`
-  link.href = URL.createObjectURL(blob)
-  link.click()
+  await saveFile(svg, `${filename}.svg`, 'image/svg+xml')
+
 }

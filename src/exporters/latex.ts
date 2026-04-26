@@ -1,4 +1,6 @@
 import type { Column, Row } from '../types'
+import { saveFile } from '../utils/fileSave'
+
 
 // --- Column alignment map ---
 function latexAlign(align: string) {
@@ -23,7 +25,7 @@ function escape(text: string) {
 }
 
 // --- Generate LaTeX tabularx code ---
-export function exportLatex(
+export async function exportLatex(
   columns: Column[],
   rows: Row[],
   title: string,
@@ -49,9 +51,6 @@ ${title ? `\\textbf{${escape(title)}}\\\\[4pt]` : ''}
 \\hline
 \\end{tabular}`
 
-  const blob = new Blob([latex], { type: 'text/plain' })
-  const link = document.createElement('a')
-  link.download = `${filename}.tex`
-  link.href = URL.createObjectURL(blob)
-  link.click()
+  await saveFile(latex, `${filename}.tex`, 'text/plain')
+
 }

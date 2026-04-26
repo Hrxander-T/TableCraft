@@ -62,11 +62,13 @@ src/
 - [x] LaTeX exporter
 - [x] SVG exporter
 
-## Phase 3 — Platform (Planned)
-- [ ] Tauri desktop wrapper
-- [ ] Native file dialogs
+## Phase 3 — Platform (In Progress)
+- [x] Tauri desktop wrapper setup
+- [x] Native file save dialogs (JSON, CSV, LaTeX, SVG, PNG, PDF)
 - [ ] Excel (.xlsx) import via SheetJS
-- [ ] Windows (.msi) + Linux (AppImage) installers
+- [ ] CSV file upload on desktop
+- [ ] Windows installer (.msi)
+- [ ] Linux AppImage
 
 ## Phase 4 — Public Launch (Planned)
 - [ ] Landing page
@@ -79,3 +81,5 @@ src/
 - html2canvas may not capture box-shadow or some CSS effects — keep preview styles simple
 - nanoid used for all IDs (columns, rows, table)
 - Tailwind v4: no tailwind.config.js, uses @tailwindcss/vite plugin
+- Header doesn't show for dark and tech theme
+- Notification when successfully exported.
