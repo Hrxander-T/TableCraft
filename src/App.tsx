@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 
 // --- Components ---
 import TableEditor from "./components/editor/TableEditor";
@@ -7,6 +8,7 @@ import ImportPanel from "./components/panels/ImportPanel";
 
 // --- Store ---
 import { useTableStore } from "./store/tableStore";
+import { useHistoryStore } from "./store/historyStore";
 
 // --- Themes ---
 import { themes } from "./themes";
@@ -15,12 +17,30 @@ import { themes } from "./themes";
 import { exportPNG } from "./exporters/png";
 import { exportPDF } from "./exporters/pdf";
 import { exportCSV } from "./exporters/csv";
+import { exportLatex } from "./exporters/latex";
+import { exportSVG } from "./exporters/svg";
 import { exportJSON, importJSON } from "./exporters/json";
 
 function App() {
   const [showImport, setShowImport] = useState(false);
   const { title, setTitle, theme, setTheme, columns, rows } = useTableStore();
   const loadState = useTableStore((s) => s.loadState);
+  const history = useHistoryStore();
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.ctrlKey && e.key === "z") {
+        const prev = history.undo(useTableStore.getState());
+        if (prev) useTableStore.getState().loadState(prev);
+      }
+      if (e.ctrlKey && e.key === "y") {
+        const next = history.redo(useTableStore.getState());
+        if (next) useTableStore.getState().loadState(next);
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [history]);
 
   return (
     <div className="h-screen bg-gray-100 flex flex-col p-6 gap-4">
@@ -73,6 +93,28 @@ function App() {
           >
             ↓ CSV
           </button>
+          <button
+            onClick={() => exportLatex(columns, rows, title)}
+            className="px-3 py-1 text-sm bg-yellow-600 text-white rounded hover:bg-yellow-700"
+          >
+            ↓ LaTeX
+          </button>
+
+          <button
+            onClick={() =>
+              exportSVG(
+                columns,
+                rows,
+                title,
+                themes[theme] ?? themes["corporate-blue"],
+                useTableStore.getState().settings,
+              )
+            }
+            className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          >
+            ↓ SVG
+          </button>
+
           <button
             onClick={() => exportJSON(useTableStore.getState())}
             className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"

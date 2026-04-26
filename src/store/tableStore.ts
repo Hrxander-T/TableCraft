@@ -1,6 +1,8 @@
 import { create } from 'zustand'
-import type { TableState, Column, Row } from '../types'
+import type { TableState, Column, Row, ColumnType, Alignment } from '../types'
 import { nanoid } from 'nanoid'
+import { useHistoryStore } from './historyStore'
+
 
 const defaultColumns: Column[] = [
   { id: 'c1', label: 'Name', width: 200, type: 'text', align: 'left' },
@@ -24,6 +26,8 @@ interface Store extends TableState {
   removeColumn: (colId: string) => void
   updateColumnLabel: (colId: string, label: string) => void
   loadState: (state: TableState) => void
+  updateColumnType: (colId: string, type: ColumnType) => void
+  updateColumnAlign: (colId: string, align: Alignment) => void
 }
 
 export const useTableStore = create<Store>((set) => ({
@@ -43,33 +47,65 @@ export const useTableStore = create<Store>((set) => ({
   setTitle: (title) => set({ title }),
   setTheme: (theme) => set({ theme }),
 
-  updateCell: (rowId, colId, value) =>
+  updateCell: (rowId, colId, value) => {
+    snapshot()
     set((s) => ({
       rows: s.rows.map((r) =>
         r.id === rowId ? { ...r, cells: { ...r.cells, [colId]: value } } : r
       ),
-    })),
+    }))
+  },
 
-  addRow: () =>
-    set((s) => ({
-      rows: [...s.rows, { id: nanoid(), cells: {} }],
-    })),
+  addRow: () => {
+    snapshot()
+    set((s) => ({ rows: [...s.rows, { id: nanoid(), cells: {} }] }))
+  },
 
-  removeRow: (rowId) =>
-    set((s) => ({ rows: s.rows.filter((r) => r.id !== rowId) })),
+  removeRow: (rowId) => {
+    snapshot()
+    set((s) => ({ rows: s.rows.filter((r) => r.id !== rowId) }))
+  },
 
-  addColumn: () =>
+  addColumn: () => {
+    snapshot()
     set((s) => ({
       columns: [...s.columns, { id: nanoid(), label: 'New Column', width: 150, type: 'text', align: 'left' }],
-    })),
+    }))
+  },
 
-  removeColumn: (colId) =>
-    set((s) => ({ columns: s.columns.filter((c) => c.id !== colId) })),
+  removeColumn: (colId) => {
+    snapshot()
+    set((s) => ({ columns: s.columns.filter((c) => c.id !== colId) }))
+  },
 
-  updateColumnLabel: (colId, label) =>
+  updateColumnLabel: (colId, label) => {
+    snapshot()
     set((s) => ({
       columns: s.columns.map((c) => (c.id === colId ? { ...c, label } : c)),
-    })),
-    
-    loadState: (state: TableState) => set({ ...state }),
+    }))
+  },
+
+  updateColumnType: (colId, type) => {
+    snapshot()
+    set((s) => ({
+      columns: s.columns.map((c) => (c.id === colId ? { ...c, type } : c)),
+    }))
+  },
+
+  updateColumnAlign: (colId, align) => {
+    snapshot()
+    set((s) => ({
+      columns: s.columns.map((c) => (c.id === colId ? { ...c, align } : c)),
+    }))
+  },
+  loadState: (state: TableState) => set({ ...state }),
 }))
+
+// --- Helper: save snapshot before mutating ---
+function snapshot() {
+  const s = useTableStore.getState()
+  useHistoryStore.getState().push({
+    id: s.id, title: s.title, theme: s.theme,
+    columns: s.columns, rows: s.rows, settings: s.settings,
+  })
+}

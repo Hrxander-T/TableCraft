@@ -55,13 +55,12 @@ src/
 - [x] Import: JSON (restore full state)
 - [x] Deployed to Vercel
 
-## Phase 2 — Polish (Next)
-- [ ] Column types: text, number, currency, badge, status, bold
-- [ ] 5 more themes (Forest Green, Warm Earth, High Contrast, Sunset Orange, Tech Terminal)
-- [ ] Undo / Redo (Ctrl+Z / Ctrl+Y)
-- [ ] LaTeX exporter
-- [ ] SVG exporter
-- [ ] Table caption support in export
+## Phase 2 — Polish ✅ (Complete)
+- [x] Column types: text, number, currency, badge, status, bold
+- [x] 8 themes
+- [x] Undo / Redo (Ctrl+Z / Ctrl+Y)
+- [x] LaTeX exporter
+- [x] SVG exporter
 
 ## Phase 3 — Platform (Planned)
 - [ ] Tauri desktop wrapper
