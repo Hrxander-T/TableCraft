@@ -9,6 +9,7 @@ import ImportPanel from '../components/panels/ImportPanel'
 // --- Store ---
 import { useTableStore } from '../store/tableStore'
 import { useHistoryStore } from '../store/historyStore'
+import { useUIStore } from '../store/uiStore'
 
 // --- Themes ---
 import { themes } from '../themes'
@@ -23,12 +24,98 @@ import { exportSVG } from '../exporters/svg'
 
 import { useState } from 'react'
 
+// --- Color tokens based on mode ---
+function colors(mode: 'dark' | 'light') {
+  if (mode === 'dark') return {
+    bg: '#0a0f1e',
+    surface: '#0d1424',
+    surface2: '#0f172a',
+    border: '#1e293b',
+    text: '#f1f5f9',
+    muted: '#475569',
+    accent: '#60a5fa',
+    accentBg: '#1e3a5f',
+    accentBorder: '#2563eb',
+  }
+  return {
+    bg: '#f8fafc',
+    surface: '#ffffff',
+    surface2: '#f1f5f9',
+    border: '#e2e8f0',
+    text: '#0f172a',
+    muted: '#94a3b8',
+    accent: '#2563eb',
+    accentBg: '#dbeafe',
+    accentBorder: '#2563eb',
+  }
+}
+
+// --- Export button ---
+function ExportBtn({ label, color, onClick}: {
+  label: string; color: string; onClick: () => void
+  c: ReturnType<typeof colors>
+}) {
+  return (
+    <button onClick={onClick} style={{
+      padding: '5px 12px', background: color, color: '#fff',
+      border: 'none', borderRadius: 6, fontSize: 11, fontWeight: 600,
+      cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.02em',
+      whiteSpace: 'nowrap',
+    }}
+      onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+      onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+    >{label}</button>
+  )
+}
+
+// --- View mode button ---
+function ViewBtn({ label, active, onClick, c }: {
+  label: string; active: boolean; onClick: () => void
+  c: ReturnType<typeof colors>
+}) {
+  return (
+    <button onClick={onClick} style={{
+      padding: '5px 12px', fontSize: 11, fontWeight: 600,
+      background: active ? c.accentBg : 'transparent',
+      color: active ? c.accent : c.muted,
+      border: '1px solid ' + (active ? c.accentBorder : c.border),
+      borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
+      whiteSpace: 'nowrap',
+    }}>{label}</button>
+  )
+}
+
+// --- Panel wrapper ---
+function Panel({ children, c }: { children: React.ReactNode; c: ReturnType<typeof colors> }) {
+  return (
+    <div style={{
+      background: c.surface, border: '1px solid ' + c.border,
+      borderRadius: 12, padding: 20, overflow: 'auto',
+      flex: 1, minWidth: 0, height: '100%', boxSizing: 'border-box',
+    }}>
+      {children}
+    </div>
+  )
+}
+
+// --- Panel label ---
+function PanelLabel({ text, c }: { text: string; c: ReturnType<typeof colors> }) {
+  return (
+    <div style={{
+      fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+      textTransform: 'uppercase', color: c.muted, marginBottom: 12,
+    }}>{text}</div>
+  )
+}
+
 export default function App() {
   const [showImport, setShowImport] = useState(false)
   const { title, setTitle, theme, setTheme, columns, rows } = useTableStore()
   const loadState = useTableStore((s) => s.loadState)
   const history = useHistoryStore()
+  const { viewMode, setViewMode, colorMode, toggleColorMode } = useUIStore()
   const navigate = useNavigate()
+  const c = colors(colorMode)
 
   // --- Keyboard shortcuts ---
   useEffect(() => {
@@ -47,72 +134,144 @@ export default function App() {
   }, [history])
 
   return (
-    <div className="h-screen bg-gray-100 flex flex-col p-6 gap-4">
+    <div style={{
+      height: '100vh', background: c.bg, display: 'flex',
+      flexDirection: 'column', fontFamily: 'Georgia, serif',
+      color: c.text, overflow: 'hidden',
+    }}>
 
       {/* --- Top bar --- */}
-      <div className="flex items-center gap-3 flex-wrap">
-        {/* --- Back to home --- */}
-        <button onClick={() => navigate('/')} className="text-blue-600 font-bold text-xl hover:text-blue-800">
-          TableCraft
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px',
+        background: c.surface, borderBottom: '1px solid ' + c.border,
+        flexShrink: 0, flexWrap: 'wrap',
+      }}>
+
+        {/* --- Logo --- */}
+        <button onClick={() => navigate('/')} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: 15, fontWeight: 700, color: c.accent,
+          fontFamily: 'inherit', letterSpacing: '-0.02em', padding: 0,
+        }}>
+          Table<span style={{ color: c.text }}>Craft</span>
         </button>
 
+        <div style={{ width: 1, height: 18, background: c.border }} />
+
+        {/* --- Title --- */}
         <input
-          className="border rounded px-2 py-1 text-sm"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Table title"
+          placeholder="Untitled Table"
+          style={{
+            background: c.surface2, border: '1px solid ' + c.border,
+            borderRadius: 6, padding: '4px 10px', fontSize: 12,
+            color: c.text, fontFamily: 'inherit', outline: 'none', width: 140,
+          }}
+          onFocus={(e) => (e.currentTarget.style.borderColor = c.accentBorder)}
+          onBlur={(e) => (e.currentTarget.style.borderColor = c.border)}
         />
 
+        {/* --- Theme selector --- */}
         <select
-          className="border rounded px-2 py-1 text-sm"
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
+          style={{
+            background: c.surface2, border: '1px solid ' + c.border,
+            borderRadius: 6, padding: '4px 10px', fontSize: 12,
+            color: c.text, fontFamily: 'inherit', outline: 'none', cursor: 'pointer',
+          }}
         >
           {Object.entries(themes).map(([key, t]) => (
             <option key={key} value={key}>{t.name}</option>
           ))}
         </select>
 
+        <div style={{ width: 1, height: 18, background: c.border }} />
+
+        {/* --- View mode --- */}
+        <div style={{ display: 'flex', gap: 4 }}>
+          <ViewBtn label="✏️ Editor" active={viewMode === 'editor'} onClick={() => setViewMode('editor')} c={c} />
+          <ViewBtn label="⬛ Split" active={viewMode === 'split'} onClick={() => setViewMode('split')} c={c} />
+          <ViewBtn label="👁 Preview" active={viewMode === 'preview'} onClick={() => setViewMode('preview')} c={c} />
+        </div>
+
+        <div style={{ width: 1, height: 18, background: c.border }} />
+
         {/* --- Export buttons --- */}
-        <div className="flex gap-2 ml-auto flex-wrap">
-          <button onClick={() => setShowImport((v) => !v)} className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600">
-            {showImport ? 'Hide Import' : '↑ Import'}
-          </button>
-          <button onClick={async () => exportPNG('table-preview', title)} className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">↓ PNG</button>
-          <button onClick={async () => exportPDF('table-preview', title)} className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700">↓ PDF</button>
-          <button onClick={async () => exportCSV(columns, rows, title)} className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700">↓ CSV</button>
-          <button onClick={async () => exportLatex(columns, rows, title)} className="px-3 py-1 text-sm bg-yellow-600 text-white rounded hover:bg-yellow-700">↓ LaTeX</button>
-          <button onClick={async () => exportSVG(columns, rows, title, themes[theme] ?? themes['corporate-blue'], useTableStore.getState().settings)} className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">↓ SVG</button>
-          <button onClick={async () => exportJSON(useTableStore.getState())} className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700">↓ JSON</button>
-          <label className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 cursor-pointer">
-            ↑ Load JSON
-            <input type="file" accept=".json" className="hidden" onChange={async (e) => {
+        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+          <ExportBtn label="↓ PNG" color="#1d4ed8" c={c} onClick={async () => exportPNG('table-preview', title)} />
+          <ExportBtn label="↓ PDF" color="#b91c1c" c={c} onClick={async () => exportPDF('table-preview', title)} />
+          <ExportBtn label="↓ SVG" color="#4338ca" c={c} onClick={async () => exportSVG(columns, rows, title, themes[theme] ?? themes['corporate-blue'], useTableStore.getState().settings)} />
+          <ExportBtn label="↓ CSV" color="#15803d" c={c} onClick={async () => exportCSV(columns, rows, title)} />
+          <ExportBtn label="↓ LaTeX" color="#b45309" c={c} onClick={async () => exportLatex(columns, rows, title)} />
+          <ExportBtn label="↓ JSON" color="#7c3aed" c={c} onClick={async () => exportJSON(useTableStore.getState())} />
+          <label style={{
+            padding: '5px 12px', background: c.surface2, color: c.muted,
+            borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+            fontFamily: 'inherit', border: '1px solid ' + c.border, whiteSpace: 'nowrap',
+          }}>
+            ↑ JSON
+            <input type="file" accept=".json" style={{ display: 'none' }} onChange={async (e) => {
               const file = e.target.files?.[0]
               if (file) loadState(await importJSON(file))
             }} />
           </label>
+          <button onClick={() => setShowImport((v) => !v)} style={{
+            padding: '5px 12px', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+            background: showImport ? c.accentBg : c.surface2,
+            color: showImport ? c.accent : c.muted,
+            border: '1px solid ' + (showImport ? c.accentBorder : c.border),
+            borderRadius: 6, fontFamily: 'inherit', whiteSpace: 'nowrap',
+          }}>↑ CSV</button>
+        </div>
+
+        {/* --- Right side: dark mode + shortcut hint --- */}
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
+          <span style={{ fontSize: 10, color: c.muted }}> Undo→Ctrl+Z · Redo→Ctrl+Y</span>
+          <button onClick={toggleColorMode} style={{
+            background: c.surface2, border: '1px solid ' + c.border,
+            borderRadius: 6, padding: '5px 10px', cursor: 'pointer',
+            fontSize: 14, lineHeight: 1,
+          }} title="Toggle light/dark mode">
+            {colorMode === 'dark' ? '☀️' : '🌙'}
+          </button>
         </div>
       </div>
 
       {/* --- Import panel --- */}
       {showImport && (
-        <div className="bg-white rounded shadow p-4 w-80">
+        <div style={{
+          background: c.surface, borderBottom: '1px solid ' + c.border,
+          padding: '12px 20px', flexShrink: 0,
+        }}>
           <ImportPanel />
         </div>
       )}
 
       {/* --- Main area --- */}
-      <div className="flex gap-6 flex-1 overflow-auto">
-        <div className="bg-white rounded shadow p-4 flex-1 overflow-auto">
-          <div className="text-xs text-gray-400 mb-2 font-semibold uppercase">Editor</div>
-          <TableEditor />
-        </div>
-        <div className="bg-white rounded shadow p-4 flex-1 overflow-auto">
-          <div className="text-xs text-gray-400 mb-2 font-semibold uppercase">Preview</div>
-          <TablePreview />
-        </div>
-      </div>
+      <div style={{
+        flex: 1, overflow: 'hidden', padding: 16,
+        display: 'flex', gap: 16,
+      }}>
 
+        {/* --- Editor panel --- */}
+        {(viewMode === 'editor' || viewMode === 'split') && (
+          <Panel c={c}>
+            <PanelLabel text="Editor" c={c} />
+            <TableEditor />
+          </Panel>
+        )}
+
+        {/* --- Preview panel --- */}
+        {(viewMode === 'preview' || viewMode === 'split') && (
+          <Panel c={c}>
+            <PanelLabel text="Preview" c={c} />
+            <TablePreview />
+          </Panel>
+        )}
+
+      </div>
     </div>
   )
 }

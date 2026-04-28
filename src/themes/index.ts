@@ -1,6 +1,7 @@
 // --- Theme interface ---
 export interface Theme {
     name: string
+    titleColor: string
     headerBg: string
     headerText: string
     rowEven: string
@@ -15,6 +16,7 @@ export const themes: Record<string, Theme> = {
     // --- Corporate Blue ---
     'corporate-blue': {
         name: 'Corporate Blue',
+        titleColor: '#1e40af',
         headerBg: '#1e40af',
         headerText: '#ffffff',
         rowEven: '#ffffff',
@@ -26,6 +28,7 @@ export const themes: Record<string, Theme> = {
     // --- Minimal Clean ---
     'minimal-clean': {
         name: 'Minimal Clean',
+        titleColor: '#334155',
         headerBg: '#334155',
         headerText: '#ffffff',
         rowEven: '#ffffff',
@@ -37,6 +40,7 @@ export const themes: Record<string, Theme> = {
     // --- Dark Professional ---
     'dark-professional': {
         name: 'Dark Professional',
+        titleColor: '#0f172a',
         headerBg: '#0f172a',
         headerText: '#ffffff',
         rowEven: '#1e293b',
@@ -48,6 +52,7 @@ export const themes: Record<string, Theme> = {
     // --- Forest Green ---
     'forest-green': {
         name: 'Forest Green',
+        titleColor: '#166534',
         headerBg: '#166534',
         headerText: '#ffffff',
         rowEven: '#ffffff',
@@ -59,6 +64,7 @@ export const themes: Record<string, Theme> = {
     // --- Warm Earth ---
     'warm-earth': {
         name: 'Warm Earth',
+        titleColor: '#92400e',
         headerBg: '#92400e',
         headerText: '#fffbeb',
         rowEven: '#fffbeb',
@@ -70,6 +76,7 @@ export const themes: Record<string, Theme> = {
     // --- High Contrast ---
     'high-contrast': {
         name: 'High Contrast',
+        titleColor: '#000000',
         headerBg: '#000000',
         headerText: '#ffffff',
         rowEven: '#ffffff',
@@ -81,6 +88,7 @@ export const themes: Record<string, Theme> = {
     // --- Sunset Orange ---
     'sunset-orange': {
         name: 'Sunset Orange',
+        titleColor:'#c2410c',
         headerBg: '#c2410c',
         headerText: '#ffffff',
         rowEven: '#ffffff',
@@ -92,6 +100,7 @@ export const themes: Record<string, Theme> = {
     // --- Tech Terminal ---
     'tech-terminal': {
         name: 'Tech Terminal',
+        titleColor: '#0d1117',
         headerBg: '#0d1117',
         headerText: '#00ff88',
         rowEven: '#161b22',

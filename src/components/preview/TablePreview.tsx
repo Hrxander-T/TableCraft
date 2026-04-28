@@ -100,7 +100,7 @@ export default function TablePreview() {
       {title && (
         <div
           style={{
-            color: theme.text,
+            color: theme.titleColor,
             fontWeight: 700,
             marginBottom: 10,
             fontSize: settings.fontSize + 2,
