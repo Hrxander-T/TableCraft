@@ -17,7 +17,7 @@ export default function Landing() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100">
 
       {/* --- Navbar --- */}
       <nav className="flex items-center justify-between px-8 py-4 bg-white shadow-sm">
