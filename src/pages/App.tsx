@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
-
 // --- Components ---
 import Toolbar from '../components/toolbar/Toolbar'
 import TableEditor from '../components/editor/TableEditor'
 import TablePreview from '../components/preview/TablePreview'
 import ImportPanel from '../components/panels/ImportPanel'
 import SettingsPanel from '../components/panels/SettingsPanel'
+import MobileApp from '../components/mobile/MobileApp'
 import { Panel, PanelLabel } from '../components/ui'
 
 // --- Store ---
 import { useTableStore } from '../store/tableStore'
 import { useHistoryStore } from '../store/historyStore'
 import { useUIStore } from '../store/uiStore'
+
+import { useIsMobile } from '../hooks/useIsMobile'
 
 // --- Utils ---
 import { colors } from '../utils/colors'
@@ -38,6 +40,9 @@ export default function App() {
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [history])
+
+  const isMobile = useIsMobile()
+  if (isMobile) return <MobileApp />
 
   return (
     <div style={{

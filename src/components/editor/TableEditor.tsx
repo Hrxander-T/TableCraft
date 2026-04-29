@@ -68,6 +68,8 @@ export default function TableEditor() {
     toggleRowHighlight,
     reorderColumns,
     reorderRows,
+    settings,
+    updateSettings
   } = useTableStore();
 
   const isDark = useUIStore((s) => s.colorMode === "dark");
@@ -86,10 +88,24 @@ export default function TableEditor() {
     rowEven: isDark ? "bg-slate-900" : "bg-white",
     rowOdd: isDark ? "bg-slate-800" : "bg-gray-50",
     inputBg: isDark ? "bg-slate-900" : "bg-white",
+    caption: isDark ? 'bg-slate-900 border-slate-600 text-slate-200 placeholder:text-slate-500'
+      : 'bg-white border-gray-300 text-gray-800 placeholder:text-gray-400'
   };
 
   return (
     <div className={`overflow-auto ${theme.text}`}>
+
+      <div style={{ marginBottom: 10, maxWidth: 400 }}>
+        <input
+          value={settings.caption}
+          onChange={(e) => updateSettings({ caption: e.target.value })}
+          placeholder="Table caption (optional)..."
+          className={`w-full px-2 py-1 text-sm rounded border outline-none ${theme.caption}`}
+          onFocus={(e) => (e.currentTarget.style.borderColor = '#2563eb')}
+          onBlur={(e) => (e.currentTarget.style.borderColor = isDark ? '#475569' : '#d1d5db')}
+        />
+      </div>
+
       <table className="border-collapse text-sm max-w-4xl">
 
         {/* --- Header --- */}

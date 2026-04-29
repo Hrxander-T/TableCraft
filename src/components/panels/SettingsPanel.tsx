@@ -60,7 +60,7 @@ export default function SettingsPanel({ c }: {
                 </div>
             </div>
 
-            {/* --- Caption --- */}
+            {/* --- Caption ---
             <div>
                 <Section label="Caption" c={c} />
                 <input
@@ -76,7 +76,7 @@ export default function SettingsPanel({ c }: {
                     onFocus={(e) => (e.currentTarget.style.borderColor = '#2563eb')}
                     onBlur={(e) => (e.currentTarget.style.borderColor = c.border)}
                 />
-            </div>
+            </div> */}
 
         </div>
     )
