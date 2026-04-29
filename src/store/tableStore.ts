@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { TableState, Column, Row, ColumnType, Alignment } from '../types'
+import type { TableState, Column, Row, ColumnType, Alignment, TableSettings } from '../types'
 import { nanoid } from 'nanoid'
 import { useHistoryStore } from './historyStore'
 
@@ -28,6 +28,9 @@ interface Store extends TableState {
   loadState: (state: TableState) => void
   updateColumnType: (colId: string, type: ColumnType) => void
   updateColumnAlign: (colId: string, align: Alignment) => void
+  updateSettings: (settings: Partial<TableSettings>) => void
+  toggleRowHighlight: (rowId: string) => void
+  updateColumnWidth: (colId: string, width: number) => void
 }
 
 export const useTableStore = create<Store>((set) => ({
@@ -99,6 +102,24 @@ export const useTableStore = create<Store>((set) => ({
     }))
   },
   loadState: (state: TableState) => set({ ...state }),
+
+  updateSettings: (patch) =>
+    set((s) => ({ settings: { ...s.settings, ...patch } })),
+
+  toggleRowHighlight: (rowId) => {
+    snapshot()
+    set((s) => ({
+      rows: s.rows.map((r) =>
+        r.id === rowId ? { ...r, highlighted: !r.highlighted } : r
+      ),
+    }))
+  },
+
+  updateColumnWidth: (colId, width) =>
+    set((s) => ({
+      columns: s.columns.map((c) => (c.id === colId ? { ...c, width } : c)),
+    })),
+
 }))
 
 // --- Helper: save snapshot before mutating ---

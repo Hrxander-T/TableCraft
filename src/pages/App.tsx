@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import TableEditor from '../components/editor/TableEditor'
 import TablePreview from '../components/preview/TablePreview'
 import ImportPanel from '../components/panels/ImportPanel'
-
+import SettingsPanel from '../components/panels/SettingsPanel'
 // --- Store ---
 import { useTableStore } from '../store/tableStore'
 import { useHistoryStore } from '../store/historyStore'
@@ -51,7 +51,7 @@ function colors(mode: 'dark' | 'light') {
 }
 
 // --- Export button ---
-function ExportBtn({ label, color, onClick}: {
+function ExportBtn({ label, color, onClick }: {
   label: string; color: string; onClick: () => void
   c: ReturnType<typeof colors>
 }) {
@@ -110,6 +110,7 @@ function PanelLabel({ text, c }: { text: string; c: ReturnType<typeof colors> })
 
 export default function App() {
   const [showImport, setShowImport] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const { title, setTitle, theme, setTheme, columns, rows } = useTableStore()
   const loadState = useTableStore((s) => s.loadState)
   const history = useHistoryStore()
@@ -196,6 +197,16 @@ export default function App() {
           <ViewBtn label="👁 Preview" active={viewMode === 'preview'} onClick={() => setViewMode('preview')} c={c} />
         </div>
 
+        {/* <div style={{ width: 1, height: 18, background: c.border }} /> */}
+        {/* -----Settings Toggle -------- */}
+        <button onClick={() => setShowSettings((v) => !v)} style={{
+          padding: '5px 12px', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+          background: showSettings ? c.accentBg : 'transparent',
+          color: showSettings ? c.accent : c.muted,
+          border: '1px solid ' + (showSettings ? c.accentBorder : c.border),
+          borderRadius: 6, fontFamily: 'inherit',
+        }}>⚙ Settings</button>
+
         <div style={{ width: 1, height: 18, background: c.border }} />
 
         {/* --- Export buttons --- */}
@@ -246,6 +257,15 @@ export default function App() {
           padding: '12px 20px', flexShrink: 0,
         }}>
           <ImportPanel />
+        </div>
+      )}
+      {/* -----Settings panel---- */}
+      {showSettings && (
+        <div style={{
+          background: c.surface, borderBottom: '1px solid ' + c.border,
+          padding: '12px 20px', flexShrink: 0,
+        }}>
+          <SettingsPanel c={c} />
         </div>
       )}
 

@@ -1,5 +1,6 @@
 import { useTableStore } from "../../store/tableStore";
 import { useUIStore } from "../../store/uiStore";
+import { useColumnResize } from '../../hooks/useColumnResize'
 import type { ColumnType, Alignment } from "../../types";
 
 // --- Options ---
@@ -14,6 +15,36 @@ const TYPES: ColumnType[] = [
 
 const ALIGNS: Alignment[] = ["left", "center", "right"];
 
+// --- Resizable column header ---
+function ResizableTh({ col, isDark, children }: {
+  col: { id: string; width: number }
+  isDark: boolean
+  children: React.ReactNode
+}) {
+  const { onMouseDown } = useColumnResize(col.id, col.width)
+
+  return (
+    <th
+      style={{ width: col.width, minWidth: col.width, position: 'relative' }}
+      className={`border p-0 ${isDark ? 'border-slate-700 bg-slate-800' : 'border-gray-300 bg-gray-100'}`}
+    >
+      {children}
+      {/* --- Resize handle --- */}
+      <div
+        onMouseDown={onMouseDown}
+        style={{
+          position: 'absolute', right: 0, top: 0, bottom: 0,
+          width: 6, cursor: 'col-resize',
+          background: 'transparent',
+          transition: 'background 0.15s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = '#2563eb88')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+      />
+    </th>
+  )
+}
+
 export default function TableEditor() {
   const {
     columns,
@@ -26,6 +57,7 @@ export default function TableEditor() {
     removeRow,
     addColumn,
     removeColumn,
+    toggleRowHighlight
   } = useTableStore();
 
   const isDark = useUIStore((s) => s.colorMode === "dark");
@@ -45,17 +77,14 @@ export default function TableEditor() {
   return (
     <div className={`overflow-auto ${theme.text}`}>
       <table className="border-collapse text-sm max-w-4xl">
-        
+
         {/* --- Header --- */}
         <thead>
           <tr>
             {columns.map((col) => (
-              <th
-                key={col.id}
-                className={`border p-0 min-w-35 ${theme.border} ${theme.headerBg}`}
-              >
-                <div className="flex flex-col gap-1 px-2 py-1">
-                  
+              <ResizableTh key={col.id} col={col} isDark={isDark}>
+
+                <div className="flex flex-col gap-1 px-2 py-1" style={{ paddingRight: 20 }}>
                   {/* Label */}
                   <div className="flex items-center gap-1">
                     <input
@@ -67,7 +96,7 @@ export default function TableEditor() {
                     />
                     <button
                       onClick={() => removeColumn(col.id)}
-                      className="text-red-400 hover:text-red-600 text-xs"
+                      className="text-red-400 hover:text-red-600 text-xs "
                     >
                       ✕
                     </button>
@@ -104,7 +133,7 @@ export default function TableEditor() {
                     </select>
                   </div>
                 </div>
-              </th>
+              </ResizableTh>
             ))}
 
             {/* Add column */}
@@ -123,7 +152,7 @@ export default function TableEditor() {
         <tbody>
           {rows.map((row, i) => (
             <tr key={row.id} className={i % 2 === 0 ? theme.rowEven : theme.rowOdd}>
-              
+
               {columns.map((col) => (
                 <td
                   key={col.id}
@@ -140,16 +169,29 @@ export default function TableEditor() {
               ))}
 
               {/* Delete row */}
-              <td
-                className={`border px-2 py-1 text-center ${theme.borderSoft}`}
-              >
-                <button
-                  onClick={() => removeRow(row.id)}
-                  className="text-red-400 hover:text-red-600 text-xs"
-                >
-                  ✕
-                </button>
+              <td className={`border px-2 py-1 text-center ${theme.borderSoft}`}>
+                {/* Highlights Row  */}
+                <div style={{ display: 'flex', gap: 4, padding: '0 6px' }}>
+                  <button
+                    onClick={() => toggleRowHighlight(row.id)}
+                    title="Highlight row"
+                    style={{
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      fontSize: 12, opacity: row.highlighted ? 1 : 0.3,
+                      padding: '2px 4px',
+                    }}
+                  >★</button>
+                  {/* Deletes Row  */}
+                  <button
+                    onClick={() => removeRow(row.id)}
+                    className="text-red-400 hover:text-red-600 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
               </td>
+
+
             </tr>
           ))}
         </tbody>
