@@ -22,6 +22,8 @@ export interface TableSettings {
     showBorder: boolean
     fontSize: number
     padding: Padding
+    caption: string
+
 }
 
 export interface TableState {

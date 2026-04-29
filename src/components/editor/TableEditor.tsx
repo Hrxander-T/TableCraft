@@ -1,6 +1,7 @@
 import { useTableStore } from "../../store/tableStore";
 import { useUIStore } from "../../store/uiStore";
 import { useColumnResize } from '../../hooks/useColumnResize'
+import { useDragReorder } from '../../hooks/useDragReorder'
 import type { ColumnType, Alignment } from "../../types";
 
 // --- Options ---
@@ -16,16 +17,23 @@ const TYPES: ColumnType[] = [
 const ALIGNS: Alignment[] = ["left", "center", "right"];
 
 // --- Resizable column header ---
-function ResizableTh({ col, isDark, children }: {
+function ResizableTh({ col, isDark, children, onDragStart, onDragOver, onDragEnd }: {
   col: { id: string; width: number }
   isDark: boolean
   children: React.ReactNode
+  onDragStart: () => void
+  onDragOver: (e: React.DragEvent) => void
+  onDragEnd: () => void
 }) {
   const { onMouseDown } = useColumnResize(col.id, col.width)
 
   return (
     <th
-      style={{ width: col.width, minWidth: col.width, position: 'relative' }}
+      draggable
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDragEnd={onDragEnd}
+      style={{ width: col.width, minWidth: col.width, position: 'relative', cursor: 'grab' }}
       className={`border p-0 ${isDark ? 'border-slate-700 bg-slate-800' : 'border-gray-300 bg-gray-100'}`}
     >
       {children}
@@ -57,10 +65,16 @@ export default function TableEditor() {
     removeRow,
     addColumn,
     removeColumn,
-    toggleRowHighlight
+    toggleRowHighlight,
+    reorderColumns,
+    reorderRows,
   } = useTableStore();
 
   const isDark = useUIStore((s) => s.colorMode === "dark");
+
+  // --- Drag reorder hooks ---
+  const rowDrag = useDragReorder(rows, (r) => r.id, reorderRows)
+  const colDrag = useDragReorder(columns, (c) => c.id, reorderColumns)
 
   // --- Theme system (centralized) ---
   const theme = {
@@ -82,9 +96,15 @@ export default function TableEditor() {
         <thead>
           <tr>
             {columns.map((col) => (
-              <ResizableTh key={col.id} col={col} isDark={isDark}>
-
-                <div className="flex flex-col gap-1 px-2 py-1" style={{ paddingRight: 20 }}>
+              <ResizableTh
+                key={col.id}
+                col={col}
+                isDark={isDark}
+                onDragStart={() => colDrag.onDragStart(col.id)}
+                onDragOver={(e) => colDrag.onDragOver(e, col.id)}
+                onDragEnd={colDrag.onDragEnd}
+              >
+                <div className="flex flex-col gap-1 px-2 py-1" style={{ paddingRight: 14 }}>
                   {/* Label */}
                   <div className="flex items-center gap-1">
                     <input
@@ -151,7 +171,12 @@ export default function TableEditor() {
         {/* --- Body --- */}
         <tbody>
           {rows.map((row, i) => (
-            <tr key={row.id} className={i % 2 === 0 ? theme.rowEven : theme.rowOdd}>
+            <tr key={row.id} draggable
+              onDragStart={() => rowDrag.onDragStart(row.id)}
+              onDragOver={(e) => rowDrag.onDragOver(e, row.id)}
+              onDragEnd={rowDrag.onDragEnd}
+              style={{ cursor: 'grab' }}
+              className={i % 2 === 0 ? theme.rowEven : theme.rowOdd}>
 
               {columns.map((col) => (
                 <td

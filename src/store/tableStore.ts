@@ -31,6 +31,8 @@ interface Store extends TableState {
   updateSettings: (settings: Partial<TableSettings>) => void
   toggleRowHighlight: (rowId: string) => void
   updateColumnWidth: (colId: string, width: number) => void
+  reorderRows: (rows: Row[]) => void
+  reorderColumns: (columns: Column[]) => void
 }
 
 export const useTableStore = create<Store>((set) => ({
@@ -45,6 +47,8 @@ export const useTableStore = create<Store>((set) => ({
     showBorder: true,
     fontSize: 14,
     padding: 'normal',
+    caption: '',
+
   },
 
   setTitle: (title) => set({ title }),
@@ -119,6 +123,16 @@ export const useTableStore = create<Store>((set) => ({
     set((s) => ({
       columns: s.columns.map((c) => (c.id === colId ? { ...c, width } : c)),
     })),
+
+  reorderRows: (rows) => {
+    snapshot()
+    set({ rows })
+  },
+
+  reorderColumns: (columns) => {
+    snapshot()
+    set({ columns })
+  },
 
 }))
 

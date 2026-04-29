@@ -93,6 +93,14 @@ src-tauri/
 - [ ] Product Hunt launch
 - [ ] v1.0 release tag on GitHub
 
+## Phase 5 — Core Features ✅ (Complete)
+- [x] Table settings panel (header, borders, alternating rows, font size, padding)
+- [x] Table caption
+- [x] Row highlighting
+- [x] Column resizing (drag handle)
+- [x] Row reordering (drag and drop)
+- [x] Column reordering (drag and drop)
+
 ## Known Issues / Decisions
 - Chunk size warning on build (801kb) — acceptable for now, fix with dynamic imports later
 - html2canvas may not capture box-shadow or some CSS effects — keep preview styles simple

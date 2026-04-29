@@ -110,6 +110,16 @@ export default function TablePreview() {
         </div>
       )}
 
+      {/* --- Caption --- */}
+      {settings.caption && (
+        <div style={{
+          color: theme.text, fontSize: settings.fontSize - 2,
+          marginTop: 6, marginBottom: 6, opacity: 0.7, fontStyle: 'italic',
+        }}>
+          {settings.caption}
+        </div>
+      )}
+
       {/* --- Table --- */}
       <table
         style={{
