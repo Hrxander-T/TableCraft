@@ -1,0 +1,128 @@
+import { useNavigate } from 'react-router-dom'
+import { useTableStore } from '../../store/tableStore'
+import { useUIStore } from '../../store/uiStore'
+import { themes } from '../../themes'
+import { colors } from '../../utils/colors'
+import { Divider, IconBtn, ExportBtn } from '../ui'
+
+// --- Exporters ---
+import { exportPNG } from '../../exporters/png'
+import { exportPDF } from '../../exporters/pdf'
+import { exportCSV } from '../../exporters/csv'
+import { exportJSON, importJSON } from '../../exporters/json'
+import { exportLatex } from '../../exporters/latex'
+import { exportSVG } from '../../exporters/svg'
+
+interface ToolbarProps {
+  showImport: boolean
+  showSettings: boolean
+  onToggleImport: () => void
+  onToggleSettings: () => void
+}
+
+export default function Toolbar({ showImport, showSettings, onToggleImport, onToggleSettings }: ToolbarProps) {
+  const navigate = useNavigate()
+  const { title, setTitle, theme, setTheme, columns, rows } = useTableStore()
+  const loadState = useTableStore((s) => s.loadState)
+  const { viewMode, setViewMode, colorMode, toggleColorMode } = useUIStore()
+  const c = colors(colorMode)
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px',
+      background: c.surface, borderBottom: '1px solid ' + c.border,
+      flexShrink: 0, flexWrap: 'wrap',
+    }}>
+
+      {/* --- Logo --- */}
+      <button onClick={() => navigate('/')} style={{
+        background: 'none', border: 'none', cursor: 'pointer',
+        fontSize: 15, fontWeight: 700, color: c.accent,
+        fontFamily: 'inherit', letterSpacing: '-0.02em', padding: 0,
+      }}>
+        Table<span style={{ color: c.text }}>Craft</span>
+      </button>
+
+      <Divider c={c} />
+
+      {/* --- Title input --- */}
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Untitled Table"
+        style={{
+          background: c.surface2, border: '1px solid ' + c.border,
+          borderRadius: 6, padding: '4px 10px', fontSize: 12,
+          color: c.text, fontFamily: 'inherit', outline: 'none', width: 140,
+        }}
+        onFocus={(e) => (e.currentTarget.style.borderColor = c.accentBorder)}
+        onBlur={(e) => (e.currentTarget.style.borderColor = c.border)}
+      />
+
+      {/* --- Theme selector --- */}
+      <select
+        value={theme}
+        onChange={(e) => setTheme(e.target.value)}
+        style={{
+          background: c.surface2, border: '1px solid ' + c.border,
+          borderRadius: 6, padding: '4px 10px', fontSize: 12,
+          color: c.text, fontFamily: 'inherit', outline: 'none', cursor: 'pointer',
+        }}
+      >
+        {Object.entries(themes).map(([key, t]) => (
+          <option key={key} value={key}>{t.name}</option>
+        ))}
+      </select>
+
+      <Divider c={c} />
+
+      {/* --- View mode --- */}
+      <div style={{ display: 'flex', gap: 4 }}>
+        <IconBtn label="✏️ Editor" active={viewMode === 'editor'} onClick={() => setViewMode('editor')} c={c} />
+        <IconBtn label="⬛ Split" active={viewMode === 'split'} onClick={() => setViewMode('split')} c={c} />
+        <IconBtn label="👁 Preview" active={viewMode === 'preview'} onClick={() => setViewMode('preview')} c={c} />
+      </div>
+
+      <Divider c={c} />
+
+      {/* --- Panel toggles --- */}
+      <IconBtn label="⚙ Settings" active={showSettings} onClick={onToggleSettings} c={c} />
+      <IconBtn label="↑ CSV" active={showImport} onClick={onToggleImport} c={c} />
+
+      <Divider c={c} />
+
+      {/* --- Export buttons --- */}
+      <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+        <ExportBtn label="↓ PNG" color="#1d4ed8" onClick={async () => exportPNG('table-preview', title)} />
+        <ExportBtn label="↓ PDF" color="#b91c1c" onClick={async () => exportPDF('table-preview', title)} />
+        <ExportBtn label="↓ SVG" color="#4338ca" onClick={async () => exportSVG(columns, rows, title, themes[theme] ?? themes['corporate-blue'], useTableStore.getState().settings)} />
+        <ExportBtn label="↓ CSV" color="#15803d" onClick={async () => exportCSV(columns, rows, title)} />
+        <ExportBtn label="↓ LaTeX" color="#b45309" onClick={async () => exportLatex(columns, rows, title)} />
+        <ExportBtn label="↓ JSON" color="#7c3aed" onClick={async () => exportJSON(useTableStore.getState())} />
+        <label style={{
+          padding: '5px 12px', background: c.surface2, color: c.muted,
+          borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+          fontFamily: 'inherit', border: '1px solid ' + c.border, whiteSpace: 'nowrap',
+        }}>
+          ↑ JSON
+          <input type="file" accept=".json" style={{ display: 'none' }} onChange={async (e) => {
+            const file = e.target.files?.[0]
+            if (file) loadState(await importJSON(file))
+          }} />
+        </label>
+      </div>
+
+      {/* --- Right side --- */}
+      <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
+        <span style={{ fontSize: 10, color: c.muted }}>Ctrl+Z · Ctrl+Y</span>
+        <button onClick={toggleColorMode} style={{
+          background: c.surface2, border: '1px solid ' + c.border,
+          borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: 14,
+        }}>
+          {colorMode === 'dark' ? '☀️' : '🌙'}
+        </button>
+      </div>
+
+    </div>
+  )
+}

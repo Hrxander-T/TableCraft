@@ -22,34 +22,36 @@ src/
 │   │   └── TableEditor.tsx
 │   ├── preview/
 │   │   └── TablePreview.tsx
-│   └── panels/
-│       └── ImportPanel.tsx
+│   ├── panels/
+│   │   ├── ImportPanel.tsx
+│   │   └── SettingsPanel.tsx
+│   ├── toolbar/
+│   │   └── Toolbar.tsx
+│   └── ui/
+│       └── index.tsx
 ├── exporters/
-│   ├── png.ts
-│   ├── pdf.ts
-│   ├── csv.ts
-│   ├── json.ts
-│   ├── svg.ts
-│   └── latex.ts
+│   ├── png.ts, pdf.ts, csv.ts, json.ts, svg.ts, latex.ts
+├── hooks/
+│   ├── useColumnResize.ts
+│   └── useDragReorder.ts
 ├── importers/
 │   └── csv.ts
 ├── store/
 │   ├── tableStore.ts
-│   └── historyStore.ts
+│   ├── historyStore.ts
+│   └── uiStore.ts
 ├── themes/
 │   └── index.ts
 ├── types/
 │   └── index.ts
 ├── utils/
+│   ├── colors.ts
 │   └── fileSave.ts
+├── pages/
+│   ├── Landing.tsx
+│   └── App.tsx
 ├── App.tsx
 └── main.tsx
-src-tauri/
-├── src/
-│   └── main.rs
-├── icons/
-├── tauri.conf.json
-└── Cargo.toml
 
 ## Phase 1 — MVP ✅ (Complete)
 - [x] Vite + React + TypeScript + Tailwind v4 setup
