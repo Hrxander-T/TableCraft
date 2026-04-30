@@ -22,13 +22,13 @@ export interface TableSettings {
     showBorder: boolean
     fontSize: number
     padding: Padding
-    caption: string
-
+    
 }
 
 export interface TableState {
     id: string
     title: string
+    caption: string
     theme: string
     columns: Column[]
     rows: Row[]

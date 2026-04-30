@@ -103,6 +103,19 @@ src/
 - [x] Row reordering (drag and drop)
 - [x] Column reordering (drag and drop)
 
+## Phase 6 — Advanced Features ✅ (Complete)
+- [x] Auto-save to localStorage (per tab)
+- [x] HTML export
+- [x] Markdown copy (Ctrl+clipboard)
+- [x] Table templates (5 presets)
+- [x] Multiple tables per session (tab bar)
+- [x] Per-tab undo/redo history
+- [x] Template apply is undoable
+- [x] JSON import is undoable
+- [x] Caption moved to TableState (content, not setting)
+- [x] Mobile undo/redo buttons
+
+
 ## Known Issues / Decisions
 - Chunk size warning on build (801kb) — acceptable for now, fix with dynamic imports later
 - html2canvas may not capture box-shadow or some CSS effects — keep preview styles simple

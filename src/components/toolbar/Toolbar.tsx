@@ -12,17 +12,21 @@ import { exportCSV } from '../../exporters/csv'
 import { exportJSON, importJSON } from '../../exporters/json'
 import { exportLatex } from '../../exporters/latex'
 import { exportSVG } from '../../exporters/svg'
+import { exportHTML } from '../../exporters/html'
+import { copyMarkdown } from '../../exporters/markdown'
 
 interface ToolbarProps {
   showImport: boolean
   showSettings: boolean
+  showTemplates: boolean
   onToggleImport: () => void
   onToggleSettings: () => void
+  onToggleTemplates: () => void
 }
 
-export default function Toolbar({ showImport, showSettings, onToggleImport, onToggleSettings }: ToolbarProps) {
+export default function Toolbar({ showImport, showSettings, showTemplates, onToggleImport, onToggleSettings, onToggleTemplates }: ToolbarProps) {
   const navigate = useNavigate()
-  const { title, setTitle, theme, setTheme, columns, rows } = useTableStore()
+  const { title, setTitle, theme, setTheme, columns, rows, caption } = useTableStore()
   const loadState = useTableStore((s) => s.loadState)
   const { viewMode, setViewMode, colorMode, toggleColorMode } = useUIStore()
   const c = colors(colorMode)
@@ -47,7 +51,7 @@ export default function Toolbar({ showImport, showSettings, onToggleImport, onTo
 
       {/* --- Title input --- */}
       <input
-        value={title}
+        value={title ?? ''}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Untitled Table"
         style={{
@@ -87,6 +91,7 @@ export default function Toolbar({ showImport, showSettings, onToggleImport, onTo
 
       {/* --- Panel toggles --- */}
       <IconBtn label="⚙ Settings" active={showSettings} onClick={onToggleSettings} c={c} />
+      <IconBtn label="📋 Templates" active={showTemplates} onClick={onToggleTemplates} c={c} />
       <IconBtn label="↑ CSV" active={showImport} onClick={onToggleImport} c={c} />
 
       <Divider c={c} />
@@ -99,6 +104,16 @@ export default function Toolbar({ showImport, showSettings, onToggleImport, onTo
         <ExportBtn label="↓ CSV" color="#15803d" onClick={async () => exportCSV(columns, rows, title)} />
         <ExportBtn label="↓ LaTeX" color="#b45309" onClick={async () => exportLatex(columns, rows, title)} />
         <ExportBtn label="↓ JSON" color="#7c3aed" onClick={async () => exportJSON(useTableStore.getState())} />
+        <ExportBtn label="↓ HTML" color="#0369a1" onClick={async () => exportHTML(columns, rows, title, caption, themes[theme] ?? themes['corporate-blue'], useTableStore.getState().settings, title)} />
+        <ExportBtn
+          label="⎘ MD"
+          color="#0f766e"
+          onClick={async () => {
+            const ok = await copyMarkdown(columns, rows)
+            if (ok) alert('Markdown copied!')
+          }}
+        />
+
         <label style={{
           padding: '5px 12px', background: c.surface2, color: c.muted,
           borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer',

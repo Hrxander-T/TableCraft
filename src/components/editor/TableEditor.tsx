@@ -68,8 +68,8 @@ export default function TableEditor() {
     toggleRowHighlight,
     reorderColumns,
     reorderRows,
-    settings,
-    updateSettings
+    caption,
+    updateCaption,
   } = useTableStore();
 
   const isDark = useUIStore((s) => s.colorMode === "dark");
@@ -97,8 +97,8 @@ export default function TableEditor() {
 
       <div style={{ marginBottom: 10, maxWidth: 400 }}>
         <input
-          value={settings.caption}
-          onChange={(e) => updateSettings({ caption: e.target.value })}
+          value={caption ?? ''}
+          onChange={(e) => updateCaption(e.target.value)}
           placeholder="Table caption (optional)..."
           className={`w-full px-2 py-1 text-sm rounded border outline-none ${theme.caption}`}
           onFocus={(e) => (e.currentTarget.style.borderColor = '#2563eb')}

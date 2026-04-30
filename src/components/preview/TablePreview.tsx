@@ -81,7 +81,7 @@ function statusIcon(value: string) {
 
 // --- TablePreview: styled read-only render target (inline styles only) ---
 export default function TablePreview() {
-  const { columns, rows, title, theme: themeKey, settings } = useTableStore();
+  const { columns, rows, title, caption, theme: themeKey, settings } = useTableStore();
   const theme = themes[themeKey] ?? themes["corporate-blue"];
 
   const paddingMap = {
@@ -111,12 +111,12 @@ export default function TablePreview() {
       )}
 
       {/* --- Caption --- */}
-      {settings.caption && (
+      {caption && (
         <div style={{
           color: theme.text, fontSize: settings.fontSize - 2,
           marginTop: 6, marginBottom: 6, opacity: 0.7, fontStyle: 'italic',
         }}>
-          {settings.caption}
+          {caption}
         </div>
       )}
 
