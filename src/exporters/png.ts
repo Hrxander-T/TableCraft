@@ -1,10 +1,10 @@
-import html2canvas from 'html2canvas'
 import { isTauri } from '../utils/fileSave'
 
 // --- Export table as PNG ---
 export async function exportPNG(elementId: string, filename = 'table') {
   const el = document.getElementById(elementId)
   if (!el) return
+  const { default: html2canvas } = await import('html2canvas')
   const canvas = await html2canvas(el, { scale: 2, useCORS: true })
 
   if (isTauri()) {

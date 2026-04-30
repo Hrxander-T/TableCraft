@@ -17,6 +17,7 @@ export default function TemplatesPanel({ c, onClose }: { c: Colors; onClose: () 
     loadState({
       id: activeId, // use current tab ID, not a new one
       title: t.name,
+      caption:'',
       theme: t.theme,
       columns: t.columns,
       rows: t.rows,
@@ -26,7 +27,6 @@ export default function TemplatesPanel({ c, onClose }: { c: Colors; onClose: () 
         showBorder: true,
         fontSize: 14,
         padding: 'normal',
-        caption: '',
         ...t.settings,
       },
     })

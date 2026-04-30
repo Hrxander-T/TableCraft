@@ -2,8 +2,8 @@ import { useTableStore } from "../../store/tableStore";
 import { useUIStore } from "../../store/uiStore";
 import { useColumnResize } from '../../hooks/useColumnResize'
 import { useDragReorder } from '../../hooks/useDragReorder'
+import { isValidValue, validationMessage } from '../../utils/validate'
 import type { ColumnType, Alignment } from "../../types";
-
 // --- Options ---
 const TYPES: ColumnType[] = [
   "text",
@@ -195,17 +195,25 @@ export default function TableEditor() {
               className={i % 2 === 0 ? theme.rowEven : theme.rowOdd}>
 
               {columns.map((col) => (
-                <td
-                  key={col.id}
-                  className={`border p-0 ${theme.borderSoft}`}
-                >
-                  <input
-                    className={`w-full px-2 py-1 outline-none bg-transparent text-sm ${theme.text}`}
-                    value={row.cells[col.id] ?? ""}
-                    onChange={(e) =>
-                      updateCell(row.id, col.id, e.target.value)
-                    }
-                  />
+                <td key={col.id} className={`border p-0 ${theme.borderSoft}`}>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      className={`w-full px-2 py-1 outline-none bg-transparent text-sm ${isDark ? 'text-slate-100' : 'text-gray-800'}`}
+                      value={row.cells[col.id] ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        if (isValidValue(val, col.type)) {
+                          updateCell(row.id, col.id, val)
+                        }
+                      }}
+                      title={!isValidValue(row.cells[col.id] ?? '', col.type)
+                        ? validationMessage(col.type) : ''}
+                      style={{
+                        borderLeft: !isValidValue(row.cells[col.id] ?? '', col.type)
+                          ? '2px solid #ef4444' : '2px solid transparent',
+                      }}
+                    />
+                  </div>
                 </td>
               ))}
 

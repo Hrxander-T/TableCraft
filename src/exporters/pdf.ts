@@ -1,11 +1,12 @@
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+
 import { isTauri } from '../utils/fileSave'
 
 // --- Export table as PDF ---
 export async function exportPDF(elementId: string, filename = 'table') {
   const el = document.getElementById(elementId)
   if (!el) return
+  const { default: html2canvas } = await import('html2canvas')
+  const { default: jsPDF } = await import('jspdf')
   const canvas = await html2canvas(el, { scale: 2, useCORS: true })
   const imgData = canvas.toDataURL('image/png')
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [canvas.width, canvas.height] })

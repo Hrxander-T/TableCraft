@@ -17,10 +17,6 @@ function col(label: string, type: Column['type'] = 'text', align: Column['align'
   return { id: nanoid(), label, type, align, width }
 }
 
-// --- Helper to build rows ---
-function row(...values: string[]): Row {
-  return { id: nanoid(), cells: {} as Record<string, string> }
-}
 
 // --- Build template with linked IDs ---
 function makeTemplate(

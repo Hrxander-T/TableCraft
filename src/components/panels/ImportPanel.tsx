@@ -18,11 +18,14 @@ export default function ImportPanel() {
   function handleImport() {
     try {
       const { columns, rows } = parseCSV(text);
+      const caption = useTableStore((s) => s.caption)
+
       if (columns.length === 0) {
         setError("No data found");
         return;
       }
-      loadState({ id, title, theme, settings, columns, rows });
+      loadState({ id, title, caption, theme, settings, columns, rows })
+
       setText("");
       setError("");
     } catch {
