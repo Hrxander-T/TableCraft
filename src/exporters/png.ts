@@ -28,3 +28,21 @@ export async function exportPNG(elementId: string, filename = 'table') {
     link.click()
   }
 }
+
+// --- Copy table as image to clipboard ---
+export async function copyAsImage(elementId: string): Promise<boolean> {
+  try {
+    const el = document.getElementById(elementId)
+    if (!el) return false
+    const { default: html2canvas } = await import('html2canvas')
+    const canvas = await html2canvas(el, { scale: 2, useCORS: true })
+
+    // --- Convert to blob and copy to clipboard ---
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/png'))
+    if (!blob) return false
+    await navigator.clipboard.write([
+      new ClipboardItem({ 'image/png': blob })
+    ])
+    return true
+  } catch { return false }
+}

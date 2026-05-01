@@ -8,6 +8,7 @@ import MobileTopBar from './MobileTopBar'
 import MobileExportBar from './MobileExportBar'
 import MobileTablesPanel from './MobileTablesPanel'
 import MobileMoreDrawer from './MobileMoreDrawer'
+import { ToastContainer } from '../ui/Toast'
 
 // --- Store ---
 import { useTableStore } from '../../store/tableStore'
@@ -76,6 +77,7 @@ export default function MobileApp() {
             flexDirection: 'column', fontFamily: 'Georgia, serif',
             color: c.text, overflow: 'hidden',
         }}>
+            <ToastContainer/>
 
             {/* --- Top bar --- */}
             <MobileTopBar c={c} />

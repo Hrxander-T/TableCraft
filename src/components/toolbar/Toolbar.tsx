@@ -4,9 +4,10 @@ import { useUIStore } from '../../store/uiStore'
 import { themes } from '../../themes'
 import { colors } from '../../utils/colors'
 import { Divider, IconBtn, ExportBtn } from '../ui'
+import { showToast } from '../ui/Toast'
 
 // --- Exporters ---
-import { exportPNG } from '../../exporters/png'
+import { exportPNG, copyAsImage } from '../../exporters/png'
 import { exportPDF } from '../../exporters/pdf'
 import { exportCSV } from '../../exporters/csv'
 import { exportJSON, importJSON } from '../../exporters/json'
@@ -99,6 +100,16 @@ export default function Toolbar({ showImport, showSettings, showTemplates, onTog
       {/* --- Export buttons --- */}
       <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
         <ExportBtn label="↓ PNG" color="#1d4ed8" onClick={async () => exportPNG('table-preview', title)} />
+
+        <ExportBtn
+          label="⎘ IMG"
+          color="#1d4ed8"
+          onClick={async () => {
+            const ok = await copyAsImage('table-preview')
+            ok ? showToast('Image copied!') : showToast('Copy failed — try PNG export', 'error')
+          }}
+        />
+
         <ExportBtn label="↓ PDF" color="#b91c1c" onClick={async () => exportPDF('table-preview', title)} />
         <ExportBtn label="↓ SVG" color="#4338ca" onClick={async () => exportSVG(columns, rows, title, themes[theme] ?? themes['corporate-blue'], useTableStore.getState().settings)} />
         <ExportBtn label="↓ CSV" color="#15803d" onClick={async () => exportCSV(columns, rows, title)} />
@@ -110,7 +121,7 @@ export default function Toolbar({ showImport, showSettings, showTemplates, onTog
           color="#0f766e"
           onClick={async () => {
             const ok = await copyMarkdown(columns, rows)
-            if (ok) alert('Markdown copied!')
+            ok ? showToast('Markdown copied!') : showToast('Copy failed', 'error')
           }}
         />
 

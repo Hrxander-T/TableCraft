@@ -9,6 +9,7 @@ import SettingsPanel from '../components/panels/SettingsPanel'
 import TemplatesPanel from '../components/panels/TemplatesPanel'
 import MobileApp from '../components/mobile/MobileApp'
 import { Panel, PanelLabel } from '../components/ui'
+import { ToastContainer } from '../components/ui/Toast'
 
 // --- Store ---
 import { useTabsStore } from '../store/tabsStore'
@@ -61,7 +62,7 @@ export default function App() {
       flexDirection: 'column', fontFamily: 'Georgia, serif',
       color: c.text, overflow: 'hidden',
     }}>
-
+      <ToastContainer/>
       {/* --- Toolbar --- */}
       <Toolbar
         showImport={showImport}

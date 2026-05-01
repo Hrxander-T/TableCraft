@@ -115,7 +115,13 @@ src/
 - [x] Caption moved to TableState (content, not setting)
 - [x] Mobile undo/redo buttons
 
-
+## Phase 7 — UX Polish ✅ (Complete)
+- [x] Cell validation (number/currency columns reject non-numeric input)
+- [x] Keyboard navigation in editor (Tab / Shift+Tab between cells)
+- [x] Copy table as image to clipboard
+- [x] Toast notifications (replaces all alert() calls)
+- [x] Lazy loading for html2canvas + jsPDF (reduces initial bundle)
+  
 ## Known Issues / Decisions
 - Chunk size warning on build (801kb) — acceptable for now, fix with dynamic imports later
 - html2canvas may not capture box-shadow or some CSS effects — keep preview styles simple

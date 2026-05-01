@@ -92,6 +92,43 @@ export default function TableEditor() {
       : 'bg-white border-gray-300 text-gray-800 placeholder:text-gray-400'
   };
 
+  function handleCellKeyDown(
+    e: React.KeyboardEvent<HTMLInputElement>,
+    rowIndex: number,
+    colIndex: number
+  ) {
+    if (e.key !== 'Tab') return
+    e.preventDefault()
+
+    const totalCols = columns.length
+    const totalRows = rows.length
+
+    let nextRow = rowIndex
+    let nextCol = colIndex
+
+    if (e.shiftKey) {
+      // --- Shift+Tab: go back ---
+      if (colIndex > 0) {
+        nextCol = colIndex - 1
+      } else if (rowIndex > 0) {
+        nextRow = rowIndex - 1
+        nextCol = totalCols - 1
+      }
+    } else {
+      // --- Tab: go forward ---
+      if (colIndex < totalCols - 1) {
+        nextCol = colIndex + 1
+      } else if (rowIndex < totalRows - 1) {
+        nextRow = rowIndex + 1
+        nextCol = 0
+      }
+    }
+
+    // --- Focus next cell ---
+    const nextId = `cell-${rows[nextRow]?.id}-${columns[nextCol]?.id}`
+    document.getElementById(nextId)?.focus()
+  }
+
   return (
     <div className={`overflow-auto ${theme.text}`}>
 
@@ -198,6 +235,8 @@ export default function TableEditor() {
                 <td key={col.id} className={`border p-0 ${theme.borderSoft}`}>
                   <div style={{ position: 'relative' }}>
                     <input
+                      id={`cell-${row.id}-${col.id}`}
+                      onKeyDown={(e) => handleCellKeyDown(e, i, columns.indexOf(col))}
                       className={`w-full px-2 py-1 outline-none bg-transparent text-sm ${isDark ? 'text-slate-100' : 'text-gray-800'}`}
                       value={row.cells[col.id] ?? ''}
                       onChange={(e) => {

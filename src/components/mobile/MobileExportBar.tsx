@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useTableStore } from '../../store/tableStore'
 import { themes } from '../../themes'
+import { showToast } from '../ui/Toast'
 import type { Colors } from '../../utils/colors'
 
 // --- Exporters ---
-import { exportPNG } from '../../exporters/png'
+import { exportPNG, copyAsImage } from '../../exporters/png'
 import { exportPDF } from '../../exporters/pdf'
 import { exportCSV } from '../../exporters/csv'
 import { exportJSON, importJSON } from '../../exporters/json'
@@ -22,7 +23,20 @@ export default function MobileExportBar({ c }: { c: Colors }) {
     { label: '↓ CSV', color: '#15803d', fn: () => exportCSV(useTableStore.getState().columns, useTableStore.getState().rows, title) },
     { label: '↓ JSON', color: '#7c3aed', fn: () => exportJSON(useTableStore.getState()) },
     { label: '↓ HTML', color: '#0369a1', fn: () => exportHTML(useTableStore.getState().columns, useTableStore.getState().rows, title, caption, themes[theme] ?? themes['corporate-blue'], useTableStore.getState().settings, title) },
-    { label: '⎘ MD', color: '#0f766e', fn: async () => { const ok = await copyMarkdown(useTableStore.getState().columns, useTableStore.getState().rows); if (ok) alert('Copied!') } },
+    {
+      label: '⎘ MD', color: '#0f766e', fn: async () => {
+        const ok = await copyMarkdown(useTableStore.getState().columns, useTableStore.getState().rows)
+        ok ? showToast('Markdown copied!') : showToast('Copy failed', 'error')
+      }
+    },
+
+    {
+      label: '⎘ IMG', color: '#1d4ed8', fn: async () => {
+        const ok = await copyAsImage('table-preview')
+        ok ? showToast('Image copied!') : showToast('Copy failed', 'error')
+      }
+    },
+    
   ]
 
   return (
