@@ -1,4 +1,4 @@
-import type { Column, Row, TableSettings  } from '../types'
+import type { Column, Row, TableSettings } from '../types'
 import type { Theme } from '../themes'
 import { saveFile } from '../utils/fileSave'
 
@@ -35,20 +35,25 @@ export async function exportHTML(
     const bg = settings.alternatingRows
       ? i % 2 === 0 ? theme.rowEven : theme.rowOdd
       : theme.rowEven
+
     return `
-    <tr>
-      ${columns.map((col) => `
+  <tr>
+    ${columns.map((col) => {
+      const cellValue = (row.cells[col.id] ?? '').replace(/\n/g, '<br/>')
+      return `
         <td style="
           background: ${bg};
           color: ${theme.text};
           padding: ${pad};
           text-align: ${col.align};
+          white-space: pre-wrap;
           ${settings.showBorder ? `border: 1px solid ${theme.border};` : ''}
-        ">${row.cells[col.id] ?? ''}</td>
-      `).join('')}
-    </tr>`
+        ">${cellValue}</td>
+      `
+    }).join('')}
+  </tr>`
   }).join('')
-
+  
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>

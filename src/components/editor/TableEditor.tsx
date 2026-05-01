@@ -89,12 +89,13 @@ export default function TableEditor() {
     rowEven: isDark ? "bg-slate-900" : "bg-white",
     rowOdd: isDark ? "bg-slate-800" : "bg-gray-50",
     inputBg: isDark ? "bg-slate-900" : "bg-white",
+    inputText: isDark ? 'text-slate-100' : 'text-gray-800',
     caption: isDark ? 'bg-slate-900 border-slate-600 text-slate-200 placeholder:text-slate-500'
       : 'bg-white border-gray-300 text-gray-800 placeholder:text-gray-400'
   };
 
   function handleCellKeyDown(
-    e: React.KeyboardEvent<HTMLInputElement>,
+    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
     rowIndex: number,
     colIndex: number
   ) {
@@ -293,20 +294,28 @@ export default function TableEditor() {
 
                 <td key={col.id} className={`border p-0 ${theme.borderSoft}`}>
                   <div style={{ position: 'relative' }}>
-                    <input
+                    <textarea
                       id={`cell-${row.id}-${col.id}`}
-                      onKeyDown={(e) => handleCellKeyDown(e, i, columns.indexOf(col))}
-                      className={`w-full px-2 py-1 outline-none bg-transparent text-sm ${isDark ? 'text-slate-100' : 'text-gray-800'}`}
+                      rows={1}
                       value={row.cells[col.id] ?? ''}
                       onChange={(e) => {
                         const val = e.target.value
-                        if (isValidValue(val, col.type)) {
-                          updateCell(row.id, col.id, val)
+                        if (isValidValue(val, col.type)) updateCell(row.id, col.id, val)
+                        e.target.style.height = 'auto'
+                        e.target.style.height = e.target.scrollHeight + 'px'
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Tab') {
+                          e.preventDefault()
+                          handleCellKeyDown(e as unknown as React.KeyboardEvent<HTMLInputElement>, i, columns.indexOf(col))
                         }
                       }}
-                      title={!isValidValue(row.cells[col.id] ?? '', col.type)
-                        ? validationMessage(col.type) : ''}
+                      title={!isValidValue(row.cells[col.id] ?? '', col.type) ? validationMessage(col.type) : ''}
                       style={{
+                        width: '100%', padding: '4px 8px', outline: 'none',
+                        background: 'transparent', resize: 'none', overflow: 'hidden',
+                        fontSize: 14, fontFamily: 'inherit', lineHeight: 1.5,
+                        color: isDark ? '#f1f5f9' : '#0f172a', border: 'none',
                         borderLeft: !isValidValue(row.cells[col.id] ?? '', col.type)
                           ? '2px solid #ef4444' : '2px solid transparent',
                       }}

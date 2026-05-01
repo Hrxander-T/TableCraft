@@ -16,6 +16,7 @@ import { exportLatex } from '../../exporters/latex'
 import { exportSVG } from '../../exporters/svg'
 import { exportHTML } from '../../exporters/html'
 import { copyMarkdown } from '../../exporters/markdown'
+import { buildShareUrl } from '../../utils/shareUrl'
 
 interface ToolbarProps {
   showImport: boolean
@@ -159,6 +160,18 @@ export default function Toolbar({ showImport, showSettings, showTemplates, onTog
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
         <span style={{ fontSize: 10, color: c.muted }}>Ctrl+Z · Ctrl+Y</span>
 
+        {/* Share Url  */}
+        <button onClick={() => {
+          const url = buildShareUrl(useTableStore.getState())
+          navigator.clipboard.writeText(url)
+          showToast('Share link copied!')
+        }} style={{
+          background: c.surface2, border: '1px solid ' + c.border,
+          borderRadius: 6, padding: '5px 10px', cursor: 'pointer',
+          fontSize: 11, color: c.muted, fontFamily: 'inherit', fontWeight: 600,
+          whiteSpace: 'nowrap',
+        }}>🔗 Share</button>
+        
         {/* Shortcut dialog  */}
         <button onClick={showShortcuts} style={{
           background: c.surface2, border: '1px solid ' + c.border,

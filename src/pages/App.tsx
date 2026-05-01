@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { decodeState } from '../utils/shareUrl'
 // --- Components ---
 import TabBar from '../components/tabs/TabBar'
 import Toolbar from '../components/toolbar/Toolbar'
@@ -9,7 +10,7 @@ import SettingsPanel from '../components/panels/SettingsPanel'
 import TemplatesPanel from '../components/panels/TemplatesPanel'
 import MobileApp from '../components/mobile/MobileApp'
 import { Panel, PanelLabel } from '../components/ui'
-import { ToastContainer } from '../components/ui/Toast'
+import { showToast, ToastContainer } from '../components/ui/Toast'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 
 // --- Store ---
@@ -54,6 +55,22 @@ export default function App() {
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [history])
+
+  useEffect(() => {
+  const params = new URLSearchParams(window.location.search)
+  const share = params.get('share')
+  if (share) {
+    const state = decodeState(share)
+    if (state) {
+      useTableStore.getState().loadStateSilent(state)
+      // --- clean URL without reload ---
+      window.history.replaceState({}, '', '/app')
+      showToast('Shared table loaded!')
+    } else {
+      showToast('Invalid share link', 'error')
+    }
+  }
+}, [])
 
   const isMobile = useIsMobile()
   if (isMobile) return <MobileApp />

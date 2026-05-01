@@ -22,6 +22,8 @@ function escape(text: string) {
     .replace(/\}/g, '\\}')
     .replace(/~/g, '\\textasciitilde{}')
     .replace(/\^/g, '\\textasciicircum{}')
+    .replace(/\n/g, ' \\\\\n  ')
+
 }
 
 // --- Generate LaTeX tabularx code ---

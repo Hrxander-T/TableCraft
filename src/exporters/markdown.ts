@@ -14,9 +14,10 @@ export function toMarkdown(columns: Column[], rows: Row[]): string {
 
   // --- Rows ---
   const body = rows.map((row) =>
-    '| ' + columns.map((col) => row.cells[col.id] ?? '').join(' | ') + ' |'
+    '| ' + columns.map((col) => (row.cells[col.id] ?? '').replace(/\n/g, '<br>')).join(' | ')
   ).join('\n')
 
+    
   return [header, sep, body].join('\n')
 }
 

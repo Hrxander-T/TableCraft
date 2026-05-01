@@ -132,6 +132,13 @@ src/
 - [x] Keyboard shortcuts cheatsheet (? button)
 - [x] Toast on JSON load success
 
+## Phase 9 — Content & Sharing ✅ (Complete)
+- [x] Multiline cells (textarea, auto-height)
+- [x] Multiline support in all exporters (HTML, SVG, LaTeX, Markdown)
+- [x] Share via URL (LZ compressed, copies to clipboard)
+- [x] Share link loads on app open
+
+
 ## Known Issues / Decisions
 - Chunk size warning on build (801kb) — acceptable for now, fix with dynamic imports later
 - html2canvas may not capture box-shadow or some CSS effects — keep preview styles simple

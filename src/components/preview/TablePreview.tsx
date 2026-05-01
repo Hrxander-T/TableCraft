@@ -187,6 +187,8 @@ export default function TablePreview() {
                       : "none",
                     padding: cellPadding,
                     textAlign: col.align,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
                   }}
                 >
                   {renderCell(row.cells[col.id] ?? "", col, theme)}

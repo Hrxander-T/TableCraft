@@ -6,6 +6,8 @@ import { useUIStore } from '../../store/uiStore'
 import { themes } from '../../themes'
 import type { Colors } from '../../utils/colors'
 import { showShortcuts } from '../ui/ShortcutsDialog'
+import { buildShareUrl } from '../../utils/shareUrl'
+import { showToast } from '../ui/Toast'
 
 export default function MobileTopBar({ c }: { c: Colors }) {
   const navigate = useNavigate()
@@ -71,6 +73,17 @@ export default function MobileTopBar({ c }: { c: Colors }) {
           fontSize: 13, flexShrink: 0,
         }}>{icon}</button>
       ))}
+
+      {/* ShareUrl  */}
+      <button onClick={() => {
+        const url = buildShareUrl(useTableStore.getState())
+        navigator.clipboard.writeText(url)
+        showToast('Share link copied!')
+      }} style={{
+        background: c.surface2, border: '1px solid ' + c.border,
+        borderRadius: 6, padding: '4px 7px', cursor: 'pointer',
+        fontSize: 12, flexShrink: 0,
+      }}>🔗</button>
 
       {/* -------Shortcut Dialog--------- */}
       <button onClick={showShortcuts} style={{

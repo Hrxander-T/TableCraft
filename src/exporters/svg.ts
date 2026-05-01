@@ -21,7 +21,7 @@ export async function exportSVG(
   const colWidths = columns.map((c) => c.width)
   const totalWidth = colWidths.reduce((a, b) => a + b, 0)
   const titleHeight = title ? rowHeight + 8 : 0
-  const totalHeight = titleHeight + rowHeight + rows.length * rowHeight
+  // const totalHeight = titleHeight + rowHeight + rows.length * rowHeight
 
   // --- Build SVG rows ---
   let svgRows = ''
@@ -40,21 +40,34 @@ export async function exportSVG(
   })
 
   // --- Body rows ---
+  let currentY = titleHeight + rowHeight
+
   rows.forEach((row, ri) => {
-    const y = titleHeight + rowHeight + ri * rowHeight
+    const lines = Math.max(1, ...columns.map((col) => (row.cells[col.id] ?? '').split('\n').length))
+    const rowH = lines * (fontSize + 4) + pad * 2
     const bg = settings.alternatingRows
       ? ri % 2 === 0 ? theme.rowEven : theme.rowOdd
       : theme.rowEven
     x = 0
     columns.forEach((col, ci) => {
-      svgRows += `<rect x="${x}" y="${y}" width="${colWidths[ci]}" height="${rowHeight}" fill="${bg}"/>`
+      svgRows += `<rect x="${x}" y="${currentY}" width="${colWidths[ci]}" height="${rowH}" fill="${bg}"/>`
       if (settings.showBorder) {
-        svgRows += `<rect x="${x}" y="${y}" width="${colWidths[ci]}" height="${rowHeight}" fill="none" stroke="${theme.border}" stroke-width="1"/>`
+        svgRows += `<rect x="${x}" y="${currentY}" width="${colWidths[ci]}" height="${rowH}" fill="none" stroke="${theme.border}" stroke-width="1"/>`
       }
-      svgRows += `<text x="${x + pad}" y="${y + fontSize + pad - 2}" font-size="${fontSize}" fill="${theme.text}" font-family="system-ui,sans-serif">${row.cells[col.id] ?? ''}</text>`
+      const cellLines = (row.cells[col.id] ?? '').split('\n')
+      cellLines.forEach((line, li) => {
+        svgRows += `<text x="${x + pad}" y="${currentY + fontSize + pad - 2 + li * (fontSize + 4)}" font-size="${fontSize}" fill="${theme.text}" font-family="system-ui,sans-serif">${line}</text>`
+      })
       x += colWidths[ci]
     })
+    currentY += rowH
   })
+
+  // --- update totalHeight ---
+  const totalHeight = titleHeight + rowHeight + rows.reduce((sum, row) => {
+    const lines = Math.max(1, ...columns.map((col) => (row.cells[col.id] ?? '').split('\n').length))
+    return sum + lines * (fontSize + 4) + pad * 2
+  }, 0)
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}">
   <rect width="${totalWidth}" height="${totalHeight}" fill="#ffffff"/>
