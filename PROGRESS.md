@@ -121,7 +121,17 @@ src/
 - [x] Copy table as image to clipboard
 - [x] Toast notifications (replaces all alert() calls)
 - [x] Lazy loading for html2canvas + jsPDF (reduces initial bundle)
-  
+
+## Phase 8 — Polish ✅ (Complete)
+- [x] Error boundaries (editor + preview panels)
+- [x] JSON import validation (shape check)
+- [x] Confirmation dialogs (delete tab, apply template, delete row/column)
+- [x] Empty state (no rows / no columns)
+- [x] Drag handle grip icon on rows (⠿)
+- [x] Row + column count indicator in toolbar
+- [x] Keyboard shortcuts cheatsheet (? button)
+- [x] Toast on JSON load success
+
 ## Known Issues / Decisions
 - Chunk size warning on build (801kb) — acceptable for now, fix with dynamic imports later
 - html2canvas may not capture box-shadow or some CSS effects — keep preview styles simple

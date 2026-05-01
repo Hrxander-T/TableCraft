@@ -1,6 +1,8 @@
 import { useTableStore } from '../../store/tableStore'
 import { useTabsStore } from '../../store/tabsStore'
 import { loadFromLocal } from '../../utils/autoSave'
+import { showConfirm } from '../ui/ConfirmDialog'
+
 import type { Colors } from '../../utils/colors'
 
 export default function MobileTablesPanel({ c, onSwitch }: {
@@ -28,12 +30,19 @@ export default function MobileTablesPanel({ c, onSwitch }: {
     }
 
     function handleRemove(id: string) {
-        removeTab(id)
-        setTimeout(() => {
-            const { activeId } = useTabsStore.getState()
-            const state = loadFromLocal(activeId)
-            if (state) loadStateSilent(state)
-        }, 0)
+        showConfirm({
+            message: `Delete "${tabTitles[id] ?? 'Untitled'}"? This cannot be undone.`,
+            confirmLabel: 'Delete',
+            danger: true,
+            onConfirm: () => {
+                removeTab(id)
+                setTimeout(() => {
+                    const { activeId } = useTabsStore.getState()
+                    const state = loadFromLocal(activeId)
+                    if (state) loadStateSilent(state)
+                }, 0)
+            },
+        })
     }
 
     return (

@@ -1,10 +1,11 @@
 import { useTabsStore } from '../../store/tabsStore'
 import { useTableStore } from '../../store/tableStore'
 import { loadFromLocal } from '../../utils/autoSave'
+import { showConfirm } from '../ui/ConfirmDialog'
 import type { Colors } from '../../utils/colors'
 
 export default function TabBar({ c }: { c: Colors }) {
-    const { tabIds, activeId, setActive, addTab, removeTab, getTab } = useTabsStore()
+    const { tabIds, activeId,tabTitles, setActive, addTab, removeTab, getTab } = useTabsStore()
 
     function switchTab(id: string) {
         setActive(id)
@@ -23,14 +24,20 @@ export default function TabBar({ c }: { c: Colors }) {
 
     function handleRemove(e: React.MouseEvent, id: string) {
         e.stopPropagation()
-        removeTab(id)
-        setTimeout(() => {
-            const { activeId } = useTabsStore.getState()
-            const state = loadFromLocal(activeId)
-            if (state) useTableStore.getState().loadStateSilent(state)
-        }, 0)
+        showConfirm({
+            message: `Delete "${tabTitles[id] ?? 'Untitled'}"? This cannot be undone.`,
+            confirmLabel: 'Delete',
+            danger: true,
+            onConfirm: () => {
+                removeTab(id)
+                setTimeout(() => {
+                    const { activeId } = useTabsStore.getState()
+                    const state = loadFromLocal(activeId)
+                    if (state) useTableStore.getState().loadStateSilent(state)
+                }, 0)
+            },
+        })
     }
-
     return (
         <div style={{
             display: 'flex', alignItems: 'center', gap: 2,

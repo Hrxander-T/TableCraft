@@ -9,6 +9,8 @@ import MobileExportBar from './MobileExportBar'
 import MobileTablesPanel from './MobileTablesPanel'
 import MobileMoreDrawer from './MobileMoreDrawer'
 import { ToastContainer } from '../ui/Toast'
+import { ConfirmDialog } from '../ui/ConfirmDialog'
+import { ShortcutsDialog } from '../ui/ShortcutsDialog'
 
 // --- Store ---
 import { useTableStore } from '../../store/tableStore'
@@ -78,7 +80,9 @@ export default function MobileApp() {
             color: c.text, overflow: 'hidden',
         }}>
             <ToastContainer/>
-
+            <ConfirmDialog/>
+            <ShortcutsDialog/>
+            
             {/* --- Top bar --- */}
             <MobileTopBar c={c} />
 

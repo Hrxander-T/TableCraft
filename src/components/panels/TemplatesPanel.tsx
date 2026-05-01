@@ -2,6 +2,7 @@ import { useTableStore } from '../../store/tableStore'
 import { useTabsStore } from '../../store/tabsStore'
 
 import { templates } from '../../templates'
+import { showConfirm } from '../ui/ConfirmDialog'
 import type { Colors } from '../../utils/colors'
 // import { nanoid } from 'nanoid'
 
@@ -11,26 +12,32 @@ export default function TemplatesPanel({ c, onClose }: { c: Colors; onClose: () 
 
   function applyTemplate(templateId: string) {
     const t = templates.find((t) => t.id === templateId)
-    const activeId = useTabsStore.getState().activeId
-
     if (!t) return
-    loadState({
-      id: activeId, // use current tab ID, not a new one
-      title: t.name,
-      caption:'',
-      theme: t.theme,
-      columns: t.columns,
-      rows: t.rows,
-      settings: {
-        showHeader: true,
-        alternatingRows: true,
-        showBorder: true,
-        fontSize: 14,
-        padding: 'normal',
-        ...t.settings,
+    showConfirm({
+      message: `Apply "${t.name}"? This will replace your current table.`,
+      confirmLabel: 'Apply',
+      danger: true,
+      onConfirm: () => {
+        const activeId = useTabsStore.getState().activeId
+        loadState({
+          id: activeId,
+          title: t.name,
+          caption: '',
+          theme: t.theme,
+          columns: t.columns,
+          rows: t.rows,
+          settings: {
+            showHeader: true,
+            alternatingRows: true,
+            showBorder: true,
+            fontSize: 14,
+            padding: 'normal',
+            ...t.settings,
+          },
+        })
+        onClose()
       },
     })
-    onClose()
   }
 
   return (

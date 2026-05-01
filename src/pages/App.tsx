@@ -10,6 +10,7 @@ import TemplatesPanel from '../components/panels/TemplatesPanel'
 import MobileApp from '../components/mobile/MobileApp'
 import { Panel, PanelLabel } from '../components/ui'
 import { ToastContainer } from '../components/ui/Toast'
+import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 
 // --- Store ---
 import { useTabsStore } from '../store/tabsStore'
@@ -21,6 +22,7 @@ import { useIsMobile } from '../hooks/useIsMobile'
 
 // --- Utils ---
 import { colors } from '../utils/colors'
+import { ShortcutsDialog } from '../components/ui/ShortcutsDialog'
 
 export default function App() {
   const [showImport, setShowImport] = useState(false)
@@ -63,6 +65,8 @@ export default function App() {
       color: c.text, overflow: 'hidden',
     }}>
       <ToastContainer/>
+      <ConfirmDialog/>
+      <ShortcutsDialog/>
       {/* --- Toolbar --- */}
       <Toolbar
         showImport={showImport}

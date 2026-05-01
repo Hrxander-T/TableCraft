@@ -36,7 +36,7 @@ export default function MobileExportBar({ c }: { c: Colors }) {
         ok ? showToast('Image copied!') : showToast('Copy failed', 'error')
       }
     },
-    
+
   ]
 
   return (
@@ -64,10 +64,17 @@ export default function MobileExportBar({ c }: { c: Colors }) {
             fontFamily: 'inherit', border: '1px solid ' + c.border,
           }}>
             ↑ JSON
-            <input type="file" accept=".json" style={{ display: 'none' }} onChange={async (e) => {
-              const file = e.target.files?.[0]
-              if (file) loadState(await importJSON(file))
-            }} />
+            <input type="file" accept=".json" style={{ display: 'none' }}
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                try {
+                  loadState(await importJSON(file))
+                  showToast('Table loaded!')
+                } catch {
+                  showToast('Invalid JSON file', 'error')
+                }
+              }} />
           </label>
         </div>
       )}

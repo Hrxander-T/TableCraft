@@ -5,10 +5,11 @@ import { useTabsStore } from '../../store/tabsStore'
 import { useUIStore } from '../../store/uiStore'
 import { themes } from '../../themes'
 import type { Colors } from '../../utils/colors'
+import { showShortcuts } from '../ui/ShortcutsDialog'
 
 export default function MobileTopBar({ c }: { c: Colors }) {
   const navigate = useNavigate()
-  const { title, setTitle, theme, setTheme } = useTableStore()
+  const { title, setTitle, theme, setTheme, rows, columns } = useTableStore()
   const { colorMode, toggleColorMode } = useUIStore()
   const history = useHistoryStore()
 
@@ -45,7 +46,7 @@ export default function MobileTopBar({ c }: { c: Colors }) {
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Untitled"
         style={{
-          width: 80, background: c.surface2, border: '1px solid ' + c.border,flex :1,
+          width: 80, background: c.surface2, border: '1px solid ' + c.border, flex: 1,
           borderRadius: 6, padding: '4px 8px', fontSize: 12,
           color: c.text, fontFamily: 'inherit', outline: 'none',
         }}
@@ -53,7 +54,7 @@ export default function MobileTopBar({ c }: { c: Colors }) {
 
       {/* --- Theme --- */}
       <select value={theme} onChange={(e) => setTheme(e.target.value)} style={{
-         background: c.surface2, border: '1px solid ' + c.border,
+        background: c.surface2, border: '1px solid ' + c.border,
         borderRadius: 6, padding: '4px 6px', fontSize: 11,
         color: c.text, fontFamily: 'inherit', outline: 'none',
       }}>
@@ -71,12 +72,29 @@ export default function MobileTopBar({ c }: { c: Colors }) {
         }}>{icon}</button>
       ))}
 
+      {/* -------Shortcut Dialog--------- */}
+      <button onClick={showShortcuts} style={{
+        background: c.surface2, border: '1px solid ' + c.border,
+        borderRadius: 6, padding: '4px 7px', cursor: 'pointer',
+        fontSize: 12, color: c.muted, fontWeight: 700, flexShrink: 0,
+      }}>?</button>
+
       {/* --- Dark mode --- */}
       <button onClick={toggleColorMode} style={{
         background: c.surface2, border: '1px solid ' + c.border,
         borderRadius: 6, padding: '4px 7px', cursor: 'pointer',
         fontSize: 13, flexShrink: 0,
       }}>{colorMode === 'dark' ? '☀️' : '🌙'}</button>
+
+      {/* Row/Column count */}
+      <div style={{
+        background: c.surface, borderBottom: '1px solid ' + c.border,
+        padding: '3px 12px', fontSize: 10, color: c.muted,
+        letterSpacing: '0.05em',
+      }}>
+        {rows.length} rows · {columns.length} cols
+      </div>
+
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { themes } from '../../themes'
 import { colors } from '../../utils/colors'
 import { Divider, IconBtn, ExportBtn } from '../ui'
 import { showToast } from '../ui/Toast'
+import { showShortcuts } from '../ui/ShortcutsDialog'
 
 // --- Exporters ---
 import { exportPNG, copyAsImage } from '../../exporters/png'
@@ -79,6 +80,14 @@ export default function Toolbar({ showImport, showSettings, showTemplates, onTog
         ))}
       </select>
 
+      <div style={{
+        fontSize: 11, color: c.muted, whiteSpace: 'nowrap',
+        padding: '4px 8px', background: c.surface2,
+        border: '1px solid ' + c.border, borderRadius: 6,
+      }}>
+        {rows.length} rows · {columns.length} cols
+      </div>
+
       <Divider c={c} />
 
       {/* --- View mode --- */}
@@ -131,16 +140,32 @@ export default function Toolbar({ showImport, showSettings, showTemplates, onTog
           fontFamily: 'inherit', border: '1px solid ' + c.border, whiteSpace: 'nowrap',
         }}>
           ↑ JSON
-          <input type="file" accept=".json" style={{ display: 'none' }} onChange={async (e) => {
-            const file = e.target.files?.[0]
-            if (file) loadState(await importJSON(file))
-          }} />
+          <input type="file" accept=".json" style={{ display: 'none' }}
+            onChange={async (e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              try {
+                loadState(await importJSON(file))
+                showToast('Table loaded!')
+              } catch {
+                showToast('Invalid JSON file', 'error')
+              }
+            }} />
         </label>
       </div>
+
 
       {/* --- Right side --- */}
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
         <span style={{ fontSize: 10, color: c.muted }}>Ctrl+Z · Ctrl+Y</span>
+
+        {/* Shortcut dialog  */}
+        <button onClick={showShortcuts} style={{
+          background: c.surface2, border: '1px solid ' + c.border,
+          borderRadius: 6, padding: '5px 10px', cursor: 'pointer',
+          fontSize: 12, color: c.muted, fontFamily: 'inherit', fontWeight: 700,
+        }} title="Keyboard shortcuts">?</button>
+
         <button onClick={toggleColorMode} style={{
           background: c.surface2, border: '1px solid ' + c.border,
           borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: 14,

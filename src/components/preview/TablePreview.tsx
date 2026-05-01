@@ -110,6 +110,18 @@ export default function TablePreview() {
         </div>
       )}
 
+      {rows.length === 0 && (
+        <div style={{
+          padding: '32px', textAlign: 'center',
+          color: theme.text, opacity: 0.4,
+          border: `2px dashed ${theme.border}`,
+          borderRadius: 12, marginBottom: 12,
+          fontSize: 13,
+        }}>
+          No data to preview
+        </div>
+      )}
+
       {/* --- Caption --- */}
       {caption && (
         <div style={{

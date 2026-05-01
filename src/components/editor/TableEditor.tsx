@@ -3,6 +3,7 @@ import { useUIStore } from "../../store/uiStore";
 import { useColumnResize } from '../../hooks/useColumnResize'
 import { useDragReorder } from '../../hooks/useDragReorder'
 import { isValidValue, validationMessage } from '../../utils/validate'
+import { showConfirm } from '../ui/ConfirmDialog'
 import type { ColumnType, Alignment } from "../../types";
 // --- Options ---
 const TYPES: ColumnType[] = [
@@ -143,11 +144,45 @@ export default function TableEditor() {
         />
       </div>
 
+      {/* ----- Empty State ----- */}
+      {/* {rows.length === 0 && (
+        <div style={{
+          padding: '32px', textAlign: 'center',
+          color: isDark ? '#475569' : '#94a3b8',
+          border: `2px dashed ${isDark ? '#1e293b' : '#e2e8f0'}`,
+          borderRadius: 12, marginBottom: 12,
+        }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>📭</div>
+          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>No rows yet</div>
+          <div style={{ fontSize: 12 }}>Click "+ Add Row" to get started</div>
+        </div>
+      )}
+
+      {columns.length === 0 && (
+        <div style={{
+          padding: '32px', textAlign: 'center',
+          color: isDark ? '#475569' : '#94a3b8',
+          border: `2px dashed ${isDark ? '#1e293b' : '#e2e8f0'}`,
+          borderRadius: 12, marginBottom: 12,
+        }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
+          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>No columns yet</div>
+          <div style={{ fontSize: 12 }}>Click "+ Col" to add your first column</div>
+        </div>
+      )} */}
+
       <table className="border-collapse text-sm max-w-4xl">
 
         {/* --- Header --- */}
         <thead>
           <tr>
+
+            {/* Empty head for the draggable icon column */}
+            <th className={`border p-0 ${isDark ? 'border-slate-700 bg-slate-800' : 'border-gray-300 bg-gray-100'}`}
+              style={{ width: 24 }}
+            />
+
+            {/* Columns  */}
             {columns.map((col) => (
               <ResizableTh
                 key={col.id}
@@ -157,6 +192,8 @@ export default function TableEditor() {
                 onDragOver={(e) => colDrag.onDragOver(e, col.id)}
                 onDragEnd={colDrag.onDragEnd}
               >
+
+
                 <div className="flex flex-col gap-1 px-2 py-1" style={{ paddingRight: 14 }}>
                   {/* Label */}
                   <div className="flex items-center gap-1">
@@ -167,8 +204,14 @@ export default function TableEditor() {
                         updateColumnLabel(col.id, e.target.value)
                       }
                     />
+                    {/* --------- Remove Column------------- */}
                     <button
-                      onClick={() => removeColumn(col.id)}
+                      onClick={() => showConfirm({
+                        message: `Delete column "${col.label}"?`,
+                        confirmLabel: 'Delete',
+                        danger: true,
+                        onConfirm: () => removeColumn(col.id),
+                      })}
                       className="text-red-400 hover:text-red-600 text-xs "
                     >
                       ✕
@@ -224,14 +267,30 @@ export default function TableEditor() {
         {/* --- Body --- */}
         <tbody>
           {rows.map((row, i) => (
-            <tr key={row.id} draggable
+
+            <tr key={row.id}
+              draggable
               onDragStart={() => rowDrag.onDragStart(row.id)}
               onDragOver={(e) => rowDrag.onDragOver(e, row.id)}
               onDragEnd={rowDrag.onDragEnd}
               style={{ cursor: 'grab' }}
               className={i % 2 === 0 ? theme.rowEven : theme.rowOdd}>
 
+              {/* --- Drag handle --- ADD THIS FIRST --- */}
+              <td
+                className={`border p-0 ${theme.borderSoft}`}
+                style={{ width: 24, userSelect: 'none' }}
+              >
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  height: '100%', padding: '4px',
+                  color: isDark ? '#334155' : '#cbd5e1',
+                  fontSize: 14, cursor: 'grab',
+                }}>⠿</div>
+              </td>
+
               {columns.map((col) => (
+
                 <td key={col.id} className={`border p-0 ${theme.borderSoft}`}>
                   <div style={{ position: 'relative' }}>
                     <input
@@ -292,6 +351,6 @@ export default function TableEditor() {
       >
         + Add Row
       </button>
-    </div>
+    </div >
   );
 }
